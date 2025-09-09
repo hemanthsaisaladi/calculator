@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Professional Scientific Calculator - Dark Theme</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
+  body {
+    margin: 0; padding: 0;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Inter', sans-serif;
+    background: #121212;
+    color: #e0e0e0;
+    position: relative;
+  }
+  .calculator {
+    background: #1e1e2f;
+    border-radius: 16px;
+    box-shadow:
+      0 8px 30px rgba(0, 0, 0, 0.9),
+      inset 0 0 20px #0fbcf9;
+    width: 360px;
+    padding: 28px 28px 36px;
+    display: flex;
+    flex-direction: column;
+    user-select: none;
+  }
+  #display {
+    background: #2c2c42;
+    font-size: 2.4rem;
+    font-weight: 600;
+    color: #0ff;
+    border-radius: 12px;
+    padding: 22px 20px;
+    text-align: right;
+    letter-spacing: 0.12em;
+    box-shadow: inset 0 0 10px #0ff;
+    min-height: 64px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    white-space: nowrap;
+  }
+  #display::-webkit-scrollbar {
+    display: none;
+  }
+  .mode-toggle {
+    margin: 16px 0 22px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    font-weight: 600;
+    color: #66f6ff;
+  }
+  .mode-toggle button {
+    background: #0bb3d6;
+    border: none;
+    color: #121212;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    border-radius: 10px;
+    padding: 8px 20px;
+    margin-left: 16px;
+    transition: background-color 0.25s ease, color 0.25s ease;
+    user-select: none;
+  }
+  .mode-toggle button.active {
+    background: #03dac6;
+    color: #0a0a0a;
+  }
+  .buttons {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 14px;
+  }
+  button {
+    border: none;
+    border-radius: 10px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    padding: 16px 0;
+    cursor: pointer;
+    transition: background-color 0.3s, box-shadow 0.2s;
+    color: #e0e0e0;
+    background-color: #323248;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.4);
+    user-select: none;
+  }
+  button:focus-visible {
+    outline: none;
+    box-shadow: 0 0 8px 3px #03dac6;
+  }
+  button:active {
+    background-color: #1e1e2f;
+    box-shadow: inset 0 2px 6px rgba(3, 218, 198, 0.9);
+  }
+  .btn-number {
+    background-color: #3e3e5a;
+    color: #e0e0e0;
+  }
+  .btn-number:hover {
+    background-color: #57577e;
+  }
+  .btn-operator {
+    background-color: #03dac6;
+    color: #121212;
+    font-weight: 700;
+  }
+  .btn-operator:hover {
+    background-color: #00c2aa;
+  }
+  .btn-function {
+    background-color: #6200ee;
+    color: #e0e0e0;
+  }
+  .btn-function:hover {
+    background-color: #7e22ff;
+  }
+  .btn-clear {
+    background-color: #b00020;
+    color: #fff;
+    font-weight: 700;
+  }
+  .btn-clear:hover {
+    background-color: #cc162f;
+  }
+  .btn-equal {
+    background-color: #018786;
+    color: white;
+    font-weight: 700;
+    grid-column: span 2;
+  }
+  .btn-equal:hover {
+    background-color: #00bfa5;
+  }
+  .span-2 {
+    grid-column: span 2;
+  }
+  .span-3 {
+    grid-column: span 3;
+  }
+  .footer-text {
+    position: fixed;
+    bottom: 12px;
+    right: 16px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: #66f6ff;
+    user-select: none;
+    opacity: 0.75;
+    pointer-events: none;
+  }
+  @media (max-width: 400px) {
+    .calculator {
+      width: 90vw;
+      padding: 20px 20px 30px;
+    }
+    #display {
+      font-size: 2rem;
+      padding: 18px 14px;
+    }
+    button {
+      font-size: 1rem;
+      padding: 14px 0;
+    }
+  }
+</style>
+</head>
+<body>
+  <div class="calculator" role="application" aria-label="Scientific Calculator">
+    <div id="display" aria-live="polite" aria-atomic="true" role="textbox" tabindex="0">0</div>
+    <div class="mode-toggle" role="group" aria-label="Angle mode">
+      <span>Mode:</span>
+      <button id="degBtn" class="active" aria-pressed="true" role="button" type="button">DEG</button>
+      <button id="radBtn" aria-pressed="false" role="button" type="button">RAD</button>
+    </div>
+    <div class="buttons" role="group" aria-label="Calculator buttons">
+      <button class="btn-clear" type="button" aria-label="Clear" title="Clear" id="btn-clear">C</button>
+      <button class="btn-function" type="button" aria-label="Backspace" title="Backspace" id="btn-backspace">⌫</button>
+      <button class="btn-function" type="button" aria-label="Open Parenthesis" title="Open Parenthesis" data-value="(">(</button>
+      <button class="btn-function" type="button" aria-label="Close Parenthesis" title="Close Parenthesis" data-value=")">)</button>
+      <button class="btn-operator" type="button" aria-label="Percentage" title="Percentage" data-value="%">%</button>
+      <button class="btn-operator" type="button" aria-label="Divide" title="Divide" data-value="÷">÷</button>
+
+      <button class="btn-number" type="button" aria-label="7" data-value="7">7</button>
+      <button class="btn-number" type="button" aria-label="8" data-value="8">8</button>
+      <button class="btn-number" type="button" aria-label="9" data-value="9">9</button>
+      <button class="btn-operator" type="button" aria-label="Multiply" title="Multiply" data-value="*">×</button>
+      <button class="btn-function" type="button" aria-label="Square Root" title="Square Root" data-value="sqrt(">√</button>
+      <button class="btn-function" type="button" aria-label="Factorial" title="Factorial" data-value="!">x!</button>
+
+      <button class="btn-number" type="button" aria-label="4" data-value="4">4</button>
+      <button class="btn-number" type="button" aria-label="5" data-value="5">5</button>
+      <button class="btn-number" type="button" aria-label="6" data-value="6">6</button>
+      <button class="btn-operator" type="button" aria-label="Subtract" title="Subtract" data-value="-">−</button>
+      <button class="btn-function" type="button" aria-label="Logarithm Base 10" title="Logarithm Base 10" data-value="log10(">log₁₀</button>
+      <button class="btn-function" type="button" aria-label="Natural Logarithm" title="Natural Logarithm" data-value="log(">ln</button>
+
+      <button class="btn-number" type="button" aria-label="1" data-value="1">1</button>
+      <button class="btn-number" type="button" aria-label="2" data-value="2">2</button>
+      <button class="btn-number" type="button" aria-label="3" data-value="3">3</button>
+      <button class="btn-operator" type="button" aria-label="Add" title="Add" data-value="+">+</button>
+      <button class="btn-function" type="button" aria-label="Log base 2" title="Log base 2" data-value="log2(">log₂</button>
+      <button class="btn-function" type="button" aria-label="Exponential e^x" title="Exponential e^x" id="btn-exp">eˣ</button>
+
+      <button class="btn-number span-2" type="button" aria-label="0" data-value="0">0</button>
+      <button class="btn-number" type="button" aria-label="Decimal point" title="Decimal point" data-value=".">.</button>
+      <button class="btn-function" type="button" aria-label="Pi constant" title="Pi constant" data-value="pi">π</button>
+      <button class="btn-function" type="button" aria-label="Euler's number" title="Euler's number" data-value="e_const">e</button>
+      <button class="btn-operator" type="button" aria-label="Power" title="Power" data-value="^">xʸ</button>
+      <button class="btn-function" type="button" aria-label="Sine" title="Sine" data-value="sin(">sin</button>
+
+      <button class="btn-function" type="button" aria-label="Cosine" title="Cosine" data-value="cos(">cos</button>
+      <button class="btn-function" type="button" aria-label="Tangent" title="Tangent" data-value="tan(">tan</button>
+      <button class="btn-function" type="button" aria-label="Clear Entry" title="Clear Entry" id="btn-ce">CE</button>
+      <button class="btn-equal span-3" type="button" aria-label="Equals" title="Equals" id="btn-equal">=</button>
+    </div>
+  </div>
+  <div class="footer-text">Developed by Hemanth Sai Saladi</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/10.6.4/math.min.js"></script>
+<script>
+  (function() {
+    const display = document.getElementById('display');
+    const buttons = document.querySelectorAll('.buttons button');
+    const degBtn = document.getElementById('degBtn');
+    const radBtn = document.getElementById('radBtn');
+    const btnClear = document.getElementById('btn-clear');
+    const btnBackspace = document.getElementById('btn-backspace');
+    const btnEqual = document.getElementById('btn-equal');
+    const btnCE = document.getElementById('btn-ce');
+    const btnExp = document.getElementById('btn-exp');
+
+    let isDegrees = true;
+    let currentInput = '';
+
+    function updateModeUI() {
+      if (isDegrees) {
+        degBtn.classList.add('active');
+        degBtn.setAttribute('aria-pressed', 'true');
+        radBtn.classList.remove('active');
+        radBtn.setAttribute('aria-pressed', 'false');
+      } else {
+        radBtn.classList.add('active');
+        radBtn.setAttribute('aria-pressed', 'true');
+        degBtn.classList.remove('active');
+        degBtn.setAttribute('aria-pressed', 'false');
+      }
+    }
+
+    function degToRad(angle) {
+      return angle * Math.PI / 180;
+    }
+
+    math.import({
+      factorial: function(n) {
+        if (n < 0) return NaN;
+        if (n === 0) return 1;
+        if (n % 1 !== 0) return NaN;
+        let res = 1;
+        for (let i = 1; i <= n; i++) res *= i;
+        return res;
+      }
+    }, {override: true});
+
+    math.import({
+      pi: Math.PI,
+      e_const: Math.E
+    }, {override: true});
+
+    function transformTrig() {
+      const trigReplacer = (fn) => {
+        return function(x) {
+          return isDegrees ? math[fn](degToRad(x)) : math[fn](x);
+        };
+      };
+      return {
+        sin: trigReplacer('sin'),
+        cos: trigReplacer('cos'),
+        tan: trigReplacer('tan'),
+        log: math.log,
+        log2: math.log2,
+        log10: math.log10,
+        sqrt: math.sqrt,
+        exp: math.exp,
+        factorial: math.factorial,
+        pi: math.pi,
+        e_const: math.e
+      };
+    }
+
+    function sanitizeInput(input) {
+      // Trim trailing operators and unmatched parentheses for safe eval
+      let sanitized = input.trim();
+
+      // Remove trailing operators
+      sanitized = sanitized.replace(/[\+\-\*\/\^\%\!\.]+$/g, '');
+
+      // Balance parentheses (add closing if more open)
+      const openParens = (sanitized.match(/\(/g) || []).length;
+      const closeParens = (sanitized.match(/\)/g) || []).length;
+      if (openParens > closeParens) {
+        sanitized += ')'.repeat(openParens - closeParens);
+      }
+      return sanitized;
+    }
+
+    function evaluateExpression(expr) {
+      try {
+        let sanitizedExpr = sanitizeInput(expr).replace(/\^/g, '**');
+        const scope = transformTrig();
+        let result = math.evaluate(sanitizedExpr, scope);
+        if (typeof result === 'number' && !isFinite(result)) throw new Error('Math error');
+        return result;
+      } catch {
+        return 'Error';
+      }
+    }
+
+    function updateDisplay() {
+      display.textContent = currentInput === '' ? '0' : currentInput;
+    }
+
+    function appendValue(val) {
+      const operators = ['+', '-', '*', '/', '%', '^'];
+      const lastChar = currentInput.slice(-1);
+
+      if (val === 'exp') {
+        currentInput += 'exp(';
+        updateDisplay();
+        return;
+      }
+
+      if (operators.includes(val)) {
+        if (currentInput === '') return;
+        if (operators.includes(lastChar)) {
+          currentInput = currentInput.slice(0, -1) + val;
+          updateDisplay();
+          return;
+        }
+      }
+      currentInput += val;
+      updateDisplay();
+    }
+
+    btnBackspace.addEventListener('click', () => {
+      currentInput = currentInput.slice(0, -1);
+      updateDisplay();
+    });
+
+    btnClear.addEventListener('click', () => {
+      currentInput = '';
+      updateDisplay();
+    });
+
+    btnCE.addEventListener('click', () => {
+      currentInput = '';
+      updateDisplay();
+    });
+
+    degBtn.addEventListener('click', () => {
+      if (!isDegrees) {
+        isDegrees = true;
+        updateModeUI();
+      }
+    });
+
+    radBtn.addEventListener('click', () => {
+      if (isDegrees) {
+        isDegrees = false;
+        updateModeUI();
+      }
+    });
+
+    buttons.forEach(btn => {
+      if (btn.id || btn === btnClear || btn === btnBackspace || btn === btnEqual || btn === btnCE || btn === degBtn || btn === radBtn) return;
+      btn.addEventListener('click', () => {
+        let val = btn.getAttribute('data-value');
+        if (!val) return;
+        if (val === '÷') val = '/';
+        if (val === 'π' || val === 'pi') val = 'pi';
+        if (val === 'e') val = 'e_const';
+        if (val === 'exp') val = 'exp';
+        appendValue(val);
+      });
+    });
+
+    btnExp.addEventListener('click', () => {
+      appendValue('exp(');
+    });
+
+    btnEqual.addEventListener('click', () => {
+      if (!currentInput) {
+        display.textContent = '0';
+        return;
+      }
+      let result = evaluateExpression(currentInput);
+      display.textContent = result === 'Error' ? result : String(result);
+      currentInput = result === 'Error' ? '' : String(result);
+    });
+
+    updateDisplay();
+    updateModeUI();
+
+    window.addEventListener('keydown', (e) => {
+      const allowedKeys = '0123456789+-*/().%^';
+      if (allowedKeys.includes(e.key)) {
+        e.preventDefault();
+        appendValue(e.key === '*' ? '*' : e.key);
+      }
+      else if (e.key === 'Enter' || e.key === '=') {
+        e.preventDefault();
+        btnEqual.click();
+      }
+      else if (e.key === 'Backspace') {
+        e.preventDefault();
+        btnBackspace.click();
+      }
+      else if (e.key.toLowerCase() === 'c') {
+        e.preventDefault();
+        btnClear.click();
+      }
+    });
+  })();
+</script>
+</body>
+</html>
