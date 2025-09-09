@@ -24,10 +24,14 @@
       0 8px 30px rgba(0, 0, 0, 0.9),
       inset 0 0 20px #0fbcf9;
     width: 360px;
+    height:auto;
     padding: 28px 28px 36px;
     display: flex;
     flex-direction: column;
     user-select: none;
+  }
+  .small{
+    height:fit-content;
   }
   #display {
     background: #2c2c42;
@@ -148,10 +152,10 @@
     bottom: 12px;
     right: 16px;
     font-family: 'Inter', sans-serif;
-    font-weight: 600;
-    font-size: 0.85rem;
+    font-weight: bolder;
+    font-size: 1rem;
     color: #66f6ff;
-    opacity: 0.75;
+    text-decoration: none;
   }
   @media (max-width: 400px) {
     .calculator {
@@ -170,7 +174,7 @@
 </style>
 </head>
 <body>
-  <div class="calculator" role="application" aria-label="Scientific Calculator">
+  <div class="calculator small" role="application" aria-label="Scientific Calculator">
     <div id="display" aria-live="polite" aria-atomic="true" role="textbox" tabindex="0">0</div>
     <div class="mode-toggle" role="group" aria-label="Angle mode">
       <span>Mode:</span>
@@ -220,7 +224,7 @@
     </div>
   </div>
   <div >
-    <a href="https://www.linkedin.com/in/hemanth-sai-saladi-3b0bb8320/" class="footer-text">Developed By Hemanth Sai Saladi</a>
+    <a href="https://www.linkedin.com/in/hemanth-sai-saladi-3b0bb8320/" target="_blank" class="footer-text">Developed By Hemanth Sai Saladi</a>
   </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/10.6.4/math.min.js"></script>
